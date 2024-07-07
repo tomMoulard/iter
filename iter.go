@@ -2,41 +2,46 @@ package iter
 
 import (
 	"cmp"
-	stdIter "iter"
+	"iter"
 	"slices"
 )
 
 // Values returns a slice of elements from the input sequence.
-func Values[T any](seq stdIter.Seq[T]) []T {
+func Values[T any](seq iter.Seq[T]) []T {
 	var res []T
+
 	seq(func(elem T) bool {
 		res = append(res, elem)
 		return true
 	})
+
 	return res
 }
 
 // Values2 returns a pair of slices of elements from the input sequence.
-func Values2[T, U any](seq stdIter.Seq2[T, U]) ([]T, []U) {
-	var resT []T
-	var resU []U
+func Values2[T, U any](seq iter.Seq2[T, U]) ([]T, []U) {
+	var (
+		resT []T
+		resU []U
+	)
+
 	seq(func(elem1 T, elem2 U) bool {
 		resT = append(resT, elem1)
 		resU = append(resU, elem2)
+
 		return true
 	})
+
 	return resT, resU
 }
 
 // Zip returns a sequence of pairs of elements from the input sequences.
 // The resulting sequence is as long as the shortest input sequence.
-func Zip[T, U any](a []T, b []U) stdIter.Seq2[T, U] {
+func Zip[T, U any](a []T, b []U) iter.Seq2[T, U] {
+	minLen := min(len(a), len(b))
+
 	return func(yield func(T, U) bool) {
-		minLen := min(len(a), len(b))
-		for i := 0; i < minLen; i++ {
-			if !yield(a[i], b[i]) {
-				return
-			}
+		for i := 0; i < minLen && yield(a[i], b[i]); i++ {
 		}
 	}
 }
@@ -46,19 +51,23 @@ func Zip[T, U any](a []T, b []U) stdIter.Seq2[T, U] {
 // The resulting sequence is as long as the longest input sequence.
 // If one sequence is shorter than the other, the missing values are filled
 // with the provided fill value.
-func ZipLongest[T, U any](a []T, b []U, fill any) stdIter.Seq2[T, U] {
+func ZipLongest[T, U any](a []T, b []U, fill any) iter.Seq2[T, U] {
+	maxLen := max(len(a), len(b))
+
 	return func(yield func(T, U) bool) {
-		maxLen := max(len(a), len(b))
 		for i := 0; i < maxLen; i++ {
-			if i < len(a) && i < len(b) {
+			switch {
+			case i < len(a) && i < len(b):
 				if !yield(a[i], b[i]) {
 					return
 				}
-			} else if i < len(a) {
+
+			case i < len(a):
 				if !yield(a[i], fill.(U)) {
 					return
 				}
-			} else if i < len(b) {
+
+			case i < len(b):
 				if !yield(fill.(T), b[i]) {
 					return
 				}
@@ -72,12 +81,12 @@ func ZipLongest[T, U any](a []T, b []U, fill any) stdIter.Seq2[T, U] {
 // The second element is the sum of the first and second elements of the input
 // sequence.
 // So on and so forth.
-func Accumulate[T cmp.Ordered](a []T) stdIter.Seq[T] {
-	return func(yield func(T) bool) {
-		if len(a) == 0 {
-			return
-		}
+func Accumulate[T cmp.Ordered](a []T) iter.Seq[T] {
+	if len(a) == 0 {
+		return func(yield func(T) bool) {}
+	}
 
+	return func(yield func(T) bool) {
 		acc := a[0]
 		if !yield(acc) {
 			return
@@ -94,11 +103,11 @@ func Accumulate[T cmp.Ordered](a []T) stdIter.Seq[T] {
 
 // Chain returns a sequence of elements from the input sequences.
 // The resulting sequence is the concatenation of the input sequences.
-func Chain[T any](seqs ...[]T) stdIter.Seq[T] {
+func Chain[T any](seqs ...[]T) iter.Seq[T] {
 	return func(yield func(T) bool) {
-		for _, seq := range seqs {
-			for _, elem := range seq {
-				if !yield(elem) {
+		for i := range seqs {
+			for j := range seqs[i] {
+				if !yield(seqs[i][j]) {
 					return
 				}
 			}
@@ -108,10 +117,10 @@ func Chain[T any](seqs ...[]T) stdIter.Seq[T] {
 
 // ChainSeq returns a sequence of elements from the input sequences.
 // The resulting sequence is the concatenation of the input sequences.
-func ChainSeq[T any](seqs ...stdIter.Seq[T]) stdIter.Seq[T] {
+func ChainSeq[T any](seqs ...iter.Seq[T]) iter.Seq[T] {
 	return func(yield func(T) bool) {
-		for _, seq := range seqs {
-			seq(func(elem T) bool {
+		for i := range seqs {
+			seqs[i](func(elem T) bool {
 				return yield(elem)
 			})
 		}
@@ -121,13 +130,11 @@ func ChainSeq[T any](seqs ...stdIter.Seq[T]) stdIter.Seq[T] {
 // Compress returns a sequence of elements from the input sequence.
 // The resulting sequence contains only the elements where the corresponding
 // selector is true.
-func Compress[T any](data []T, selectors []bool) stdIter.Seq[T] {
+func Compress[T any](data []T, selectors []bool) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		for i := range selectors {
-			if selectors[i] {
-				if !yield(data[i]) {
-					return
-				}
+			if selectors[i] && !yield(data[i]) {
+				return
 			}
 		}
 	}
@@ -136,26 +143,23 @@ func Compress[T any](data []T, selectors []bool) stdIter.Seq[T] {
 // DropWhile returns a sequence of elements from the input sequence.
 // The resulting sequence contains only the elements after the predicate is
 // false.
-func DropWhile[T any](pred func(T) bool, a []T) stdIter.Seq[T] {
-	return func(yield func(T) bool) {
-		var i int
-		for i = 0; i < len(a) && pred(a[i]); i++ {
-		}
+func DropWhile[T any](pred func(T) bool, a []T) iter.Seq[T] {
+	var i int
+	for i = 0; i < len(a) && pred(a[i]); i++ {
+	}
 
-		for ; i < len(a); i++ {
-			if !yield(a[i]) {
-				return
-			}
+	return func(yield func(T) bool) {
+		for ; i < len(a) && yield(a[i]); i++ {
 		}
 	}
 }
 
 // Filter returns a sequence of elements from the input sequence.
 // The resulting sequence contains only the elements where the predicate is true.
-func Filter[T any](pred func(T) bool, a []T) stdIter.Seq[T] {
+func Filter[T any](pred func(T) bool, a []T) iter.Seq[T] {
 	return func(yield func(T) bool) {
-		for _, elem := range a {
-			if pred(elem) && !yield(elem) {
+		for i := range a {
+			if pred(a[i]) && !yield(a[i]) {
 				return
 			}
 		}
@@ -164,10 +168,10 @@ func Filter[T any](pred func(T) bool, a []T) stdIter.Seq[T] {
 
 // FilterFalse returns a sequence of elements from the input sequence.
 // The resulting sequence contains only the elements where the predicate is false.
-func FilterFalse[T any](pred func(T) bool, a []T) stdIter.Seq[T] {
+func FilterFalse[T any](pred func(T) bool, a []T) iter.Seq[T] {
 	return func(yield func(T) bool) {
-		for _, elem := range a {
-			if !pred(elem) && !yield(elem) {
+		for i := 0; i < len(a); i++ {
+			if !pred(a[i]) && !yield(a[i]) {
 				return
 			}
 		}
@@ -177,16 +181,14 @@ func FilterFalse[T any](pred func(T) bool, a []T) stdIter.Seq[T] {
 // GroupBy returns a sequence of groups of elements from the input sequence.
 // The resulting sequence contains groups of elements where the key function
 // returns the same value.
-func GroupBy[T any, K comparable](key func(T) K, a []T) stdIter.Seq2[K, stdIter.Seq[T]] {
-	return func(yield func(K, stdIter.Seq[T]) bool) {
-		groups := make(map[K][]T)
-		for _, elem := range a {
-			k := key(elem)
-			groups[k] = append(groups[k], elem)
-		}
+func GroupBy[T any, K comparable](key func(T) K, a []T) iter.Seq2[K, iter.Seq[T]] {
+	groups := make(map[K][]T)
+	for i := range a {
+		k := key(a[i])
+		groups[k] = append(groups[k], a[i])
+	}
 
-		// fmt.Println(groups)
-
+	return func(yield func(K, iter.Seq[T]) bool) {
 		for k, group := range groups {
 			if !yield(k, slices.Values(group)) {
 				return
@@ -198,12 +200,9 @@ func GroupBy[T any, K comparable](key func(T) K, a []T) stdIter.Seq2[K, stdIter.
 // Map returns a sequence of elements from the input sequence.
 // The resulting sequence contains the elements after applying the function to
 // each element of the input sequence.
-func Map[T, U any](f func(T) U, a []T) stdIter.Seq[U] {
+func Map[T, U any](f func(T) U, a []T) iter.Seq[U] {
 	return func(yield func(U) bool) {
-		for _, elem := range a {
-			if !yield(f(elem)) {
-				return
-			}
+		for i := 0; i < len(a) && yield(f(a[i])); i++ {
 		}
 	}
 }
@@ -211,13 +210,11 @@ func Map[T, U any](f func(T) U, a []T) stdIter.Seq[U] {
 // Map2 returns a sequence of elements from the input sequences.
 // The resulting sequence contains the elements after applying the function to
 // each pair of elements from the input sequences.
-func Map2[T, U, V any](f func(T, U) V, a []T, b []U) stdIter.Seq[V] {
+func Map2[T, U, V any](f func(T, U) V, a []T, b []U) iter.Seq[V] {
+	minLen := min(len(a), len(b))
+
 	return func(yield func(V) bool) {
-		minLen := min(len(a), len(b))
-		for i := 0; i < minLen; i++ {
-			if !yield(f(a[i], b[i])) {
-				return
-			}
+		for i := 0; i < minLen && yield(f(a[i], b[i])); i++ {
 		}
 	}
 }
@@ -225,12 +222,9 @@ func Map2[T, U, V any](f func(T, U) V, a []T, b []U) stdIter.Seq[V] {
 // TakeWhile returns a sequence of elements from the input sequence.
 // The resulting sequence contains only the elements before the predicate is
 // false.
-func TakeWhile[T any](pred func(T) bool, a []T) stdIter.Seq[T] {
+func TakeWhile[T any](pred func(T) bool, a []T) iter.Seq[T] {
 	return func(yield func(T) bool) {
-		for i := 0; i < len(a) && pred(a[i]); i++ {
-			if !yield(a[i]) {
-				return
-			}
+		for i := 0; i < len(a) && pred(a[i]) && yield(a[i]); i++ {
 		}
 	}
 }
