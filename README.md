@@ -33,3 +33,7 @@ func main() {
 ```
 
 See the [GoDoc](https://pkg.go.dev/github.com/tommoulard/iter) for more information.
+
+## Ideas
+
+ - https://docs.python.org/3/library/itertools.html
