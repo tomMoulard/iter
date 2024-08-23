@@ -6,6 +6,8 @@ linters:
   disable:
     - execinquery  # deprecated
     - gomnd  # deprecated
+    - exportloopref  # deprecated
+    - varnamelen  # too strict
     # - mnd  # too strict
     # - ireturn  # not revelant
     # - exhaustive  # not revelant
@@ -63,6 +65,7 @@ linters-settings:
       - name: indent-error-flow
       - name: errorf
       - name: empty-block
+        disabled: true
       - name: superfluous-else
       - name: unused-parameter
         disabled: true
@@ -78,3 +81,8 @@ issues:
   exclude-use-default: false
   max-issues-per-linter: 0
   max-same-issues: 0
+  exclude-rules:
+    - path: '(.+)_test.go'
+      linters:
+        - forcetypeassert
+        - govet

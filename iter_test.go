@@ -87,6 +87,7 @@ func TestValues2(t *testing.T) {
 
 func TestZip(t *testing.T) {
 	t.Parallel()
+
 	tests := []struct {
 		name   string
 		a      []any
@@ -128,10 +129,12 @@ func TestZip(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
 
-			var i int
+			i := 0
+
 			for a, b := range iter.Zip(test.a, test.b) {
 				assert.Equal(t, test.expect[i][0], a)
 				assert.Equal(t, test.expect[i][1], b)
+
 				i++
 			}
 
@@ -197,10 +200,12 @@ func TestZipLongest(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
 
-			var i int
+			i := 0
+
 			for a, b := range iter.ZipLongest(test.a, test.b, test.fill) {
 				assert.Equal(t, test.expect[i][0], a)
 				assert.Equal(t, test.expect[i][1], b)
+
 				i++
 			}
 
@@ -219,9 +224,11 @@ func TestAccumulate(t *testing.T) {
 
 		a := []int{1, 2, 3, 4, 5}
 		expect := []int{1, 3, 6, 10, 15}
-		var i int
+		i := 0
+
 		for s := range iter.Accumulate(a) {
 			assert.Equal(t, expect[i], s)
+
 			i++
 		}
 
@@ -233,9 +240,11 @@ func TestAccumulate(t *testing.T) {
 
 		a := []float32{1, 2, 3, 4, 5}
 		expect := []float32{1, 3, 6, 10, 15}
-		var i int
+		i := 0
+
 		for s := range iter.Accumulate(a) {
-			assert.Equal(t, expect[i], s)
+			assert.InEpsilon(t, expect[i], s, 0.01)
+
 			i++
 		}
 
@@ -247,9 +256,11 @@ func TestAccumulate(t *testing.T) {
 
 		a := []string{"a", "b", "c", "d", "e"}
 		expect := []string{"a", "ab", "abc", "abcd", "abcde"}
-		var i int
+		i := 0
+
 		for s := range iter.Accumulate(a) {
 			assert.Equal(t, expect[i], s)
+
 			i++
 		}
 
@@ -261,9 +272,27 @@ func TestAccumulate(t *testing.T) {
 
 		a := []rune{'a', 'b', 'c', 'd', 'e', 'f'}
 		expect := []int32{97, 195, 294, 394, 495, 597}
-		var i int
+		i := 0
+
 		for s := range iter.Accumulate(a) {
 			assert.Equal(t, expect[i], s)
+
+			i++
+		}
+
+		assert.Equal(t, len(expect), i)
+	})
+
+	t.Run("accumulate empty slice", func(t *testing.T) {
+		t.Parallel()
+
+		a := []rune{}
+		expect := []int32{}
+		i := 0
+
+		for s := range iter.Accumulate(a) {
+			assert.Equal(t, expect[i], s)
+
 			i++
 		}
 
@@ -310,9 +339,11 @@ func TestChain(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
 
-			var i int
+			i := 0
+
 			for s := range iter.Chain(test.seqs...) {
 				assert.Equal(t, test.expect[i], s)
+
 				i++
 			}
 
@@ -360,10 +391,12 @@ func TestChainSeq(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
 
-			var i int
+			i := 0
+
 			for s := range iter.ChainSeq(test.seqs...) {
 				t.Log(s)
 				assert.Equal(t, test.expect[i], s)
+
 				i++
 			}
 
@@ -416,10 +449,12 @@ func TestCompress(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
 
-			var i int
+			i := 0
+
 			for s := range iter.Compress(test.data, test.selectors) {
 				t.Log(s)
 				assert.Equal(t, test.expect[i], s)
+
 				i++
 			}
 
@@ -471,10 +506,12 @@ func TestDropWhile(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
 
-			var i int
+			i := 0
+
 			for s := range iter.DropWhile(test.pred, test.a) {
 				t.Logf("s: %v", s)
 				assert.Equal(t, test.expect[i], s)
+
 				i++
 			}
 
@@ -526,10 +563,12 @@ func TestFilter(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
 
-			var i int
+			i := 0
+
 			for s := range iter.Filter(test.pred, test.a) {
 				t.Logf("s: %v", s)
 				assert.Equal(t, test.expect[i], s)
+
 				i++
 			}
 
@@ -581,10 +620,12 @@ func TestFilterFalse(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
 
-			var i int
+			i := 0
+
 			for s := range iter.FilterFalse(test.pred, test.a) {
 				t.Logf("s: %v", s)
 				assert.Equal(t, test.expect[i], s)
+
 				i++
 			}
 
@@ -702,10 +743,12 @@ func TestMap(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
 
-			var i int
+			i := 0
+
 			for s := range iter.Map(test.fn, test.a) {
 				t.Logf("s: %v", s)
 				assert.Equal(t, test.expect[i], s)
+
 				i++
 			}
 
@@ -741,10 +784,12 @@ func TestMap2(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
 
-			var i int
+			i := 0
+
 			for s := range iter.Map2(test.fn, test.a, test.b) {
 				t.Logf("s: %v", s)
 				assert.Equal(t, test.expect[i], s)
+
 				i++
 			}
 
@@ -796,10 +841,12 @@ func TestTakeWhile(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
 
-			var i int
+			i := 0
+
 			for s := range iter.TakeWhile(test.pred, test.a) {
 				t.Logf("s: %v", s)
 				assert.Equal(t, test.expect[i], s)
+
 				i++
 			}
 

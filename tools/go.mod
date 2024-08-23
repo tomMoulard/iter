@@ -1,6 +1,6 @@
 module github.com/tomMoulard/zap-slog/build
 
-go 1.23rc1
+go 1.23
 
 require (
 	github.com/client9/misspell v0.3.4

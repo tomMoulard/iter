@@ -1,6 +1,6 @@
 module github.com/tommoulard/iter
 
-go 1.23rc1
+go 1.23
 
 require github.com/stretchr/testify v1.9.0
 

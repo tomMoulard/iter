@@ -1,3 +1,4 @@
+// Package iter provides functions to work with sequences.
 package iter
 
 import (
@@ -12,6 +13,7 @@ func Values[T any](seq iter.Seq[T]) []T {
 
 	seq(func(elem T) bool {
 		res = append(res, elem)
+
 		return true
 	})
 
@@ -46,16 +48,18 @@ func Zip[T, U any](a []T, b []U) iter.Seq2[T, U] {
 	}
 }
 
+type Either[T, U any] interface{}
+
 // ZipLongest returns a sequence of pairs of elements from the input
 // sequences.
 // The resulting sequence is as long as the longest input sequence.
 // If one sequence is shorter than the other, the missing values are filled
 // with the provided fill value.
-func ZipLongest[T, U any](a []T, b []U, fill any) iter.Seq2[T, U] {
+func ZipLongest[T, U any](a []T, b []U, fill Either[T, U]) iter.Seq2[T, U] {
 	maxLen := max(len(a), len(b))
 
 	return func(yield func(T, U) bool) {
-		for i := 0; i < maxLen; i++ {
+		for i := range maxLen {
 			switch {
 			case i < len(a) && i < len(b):
 				if !yield(a[i], b[i]) {
@@ -63,12 +67,22 @@ func ZipLongest[T, U any](a []T, b []U, fill any) iter.Seq2[T, U] {
 				}
 
 			case i < len(a):
-				if !yield(a[i], fill.(U)) {
+				fillU, ok := fill.(U)
+				if !ok {
+					return
+				}
+
+				if !yield(a[i], fillU) {
 					return
 				}
 
 			case i < len(b):
-				if !yield(fill.(T), b[i]) {
+				fillT, ok := fill.(T)
+				if !ok {
+					return
+				}
+
+				if !yield(fillT, b[i]) {
 					return
 				}
 			}
@@ -93,7 +107,7 @@ func Accumulate[T cmp.Ordered](a []T) iter.Seq[T] {
 		}
 
 		for i := 1; i < len(a); i++ {
-			acc = acc + a[i]
+			acc += a[i]
 			if !yield(acc) {
 				return
 			}
@@ -170,7 +184,7 @@ func Filter[T any](pred func(T) bool, a []T) iter.Seq[T] {
 // The resulting sequence contains only the elements where the predicate is false.
 func FilterFalse[T any](pred func(T) bool, a []T) iter.Seq[T] {
 	return func(yield func(T) bool) {
-		for i := 0; i < len(a); i++ {
+		for i := range len(a) {
 			if !pred(a[i]) && !yield(a[i]) {
 				return
 			}
@@ -183,6 +197,7 @@ func FilterFalse[T any](pred func(T) bool, a []T) iter.Seq[T] {
 // returns the same value.
 func GroupBy[T any, K comparable](key func(T) K, a []T) iter.Seq2[K, iter.Seq[T]] {
 	groups := make(map[K][]T)
+
 	for i := range a {
 		k := key(a[i])
 		groups[k] = append(groups[k], a[i])
