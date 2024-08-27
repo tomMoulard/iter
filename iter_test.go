@@ -854,3 +854,41 @@ func TestTakeWhile(t *testing.T) {
 		})
 	}
 }
+
+func TestChainMap(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name    string
+		a       map[int]any
+		expectA []any
+		expectB []any
+	}{
+		{
+			name: "int map",
+			a: map[int]any{
+				1: 2,
+				3: 4,
+				5: 6,
+			},
+			expectA: []any{1, 3, 5},
+			expectB: []any{2, 4, 6},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+
+			i := 0
+			for gotA, gotB := range iter.ChainMap(test.a) {
+				assert.Equal(t, test.expectA[i], gotA)
+				assert.Equal(t, test.expectB[i], gotB)
+
+				i++
+			}
+
+			assert.Equal(t, len(test.expectA), i)
+		})
+	}
+}
