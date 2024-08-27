@@ -6,7 +6,7 @@ require (
 	github.com/golangci/golangci-lint v1.60.3
 	github.com/golangci/misspell v0.6.0
 	github.com/goreleaser/goreleaser v1.26.2
-	golang.org/x/vuln v1.1.2
+	golang.org/x/vuln v1.1.3
 )
 
 require (
