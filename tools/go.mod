@@ -3,8 +3,8 @@ module github.com/tomMoulard/zap-slog/build
 go 1.23
 
 require (
-	github.com/client9/misspell v0.3.4
 	github.com/golangci/golangci-lint v1.59.1
+	github.com/golangci/misspell v0.6.0
 	github.com/goreleaser/goreleaser v1.26.2
 	golang.org/x/vuln v1.1.2
 )
@@ -197,7 +197,6 @@ require (
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/golangci/dupl v0.0.0-20180902072040-3e9179ac440a // indirect
 	github.com/golangci/gofmt v0.0.0-20231018234816-f50ced29576e // indirect
-	github.com/golangci/misspell v0.6.0 // indirect
 	github.com/golangci/modinfo v0.3.4 // indirect
 	github.com/golangci/plugin-module-register v0.1.1 // indirect
 	github.com/golangci/revgrep v0.5.3 // indirect
