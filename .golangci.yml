@@ -86,3 +86,11 @@ issues:
       linters:
         - forcetypeassert
         - govet
+    - path: 'iter.go'
+      text: 'File is not `gci`-ed with --skip-generated -s standard -s default'
+      linters:
+        - gci
+    - path: 'iter_test.go'
+      text: 'File is not `gci`-ed with --skip-generated -s standard -s default'
+      linters:
+        - gci
