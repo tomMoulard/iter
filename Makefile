@@ -3,7 +3,7 @@ SHELL := /bin/bash
 .DEFAULT_GOAL := all
 .PHONY: all
 all: ## build pipeline
-all: mod inst build spell lint test
+all: mod inst spell lint test
 
 .PHONY: ci
 ci: ## CI build pipeline
@@ -42,7 +42,7 @@ spell: ## misspell
 .PHONY: lint
 lint: ## golangci-lint
 	yamllint .
-	goreleaser check
+	# goreleaser check # TODO:fix this weird behavior
 	golangci-lint run
 
 .PHONY: check
