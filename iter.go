@@ -5,7 +5,6 @@ import (
 	"cmp"
 	"iter"
 	"slices"
-	"sort"
 )
 
 // Values returns a slice of elements from the input sequence.
@@ -245,28 +244,27 @@ func TakeWhile[T any](pred func(T) bool, a []T) iter.Seq[T] {
 	}
 }
 
+type pair[T, U any] struct {
+	key T
+	val U
+}
+
 // ChainMap returns a sequence of elements from the input map.
 // The resulting sequence is ordered by the keys of the input map.
 func ChainMap[T cmp.Ordered, U any](a map[T]U) iter.Seq2[T, U] {
 	return func(yield func(T, U) bool) {
-		ordered := []struct {
-			key   *T
-			value *U
-		}{}
+		ordered := make([]pair[*T, *U], 0, len(a))
 
 		for k, v := range a {
-			ordered = append(ordered, struct {
-				key   *T
-				value *U
-			}{&k, &v})
+			ordered = append(ordered, pair[*T, *U]{key: &k, val: &v})
 		}
 
-		sort.Slice(ordered, func(i, j int) bool {
-			return *ordered[i].key < *ordered[j].key
+		slices.SortFunc(ordered, func(a, b pair[*T, *U]) int {
+			return cmp.Compare(*a.key, *b.key)
 		})
 
 		for _, v := range ordered {
-			if !yield(*v.key, *v.value) {
+			if !yield(*v.key, *v.val) {
 				return
 			}
 		}
