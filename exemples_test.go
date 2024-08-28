@@ -171,3 +171,19 @@ func ExampleTakeWhile() {
 	// 1
 	// 4
 }
+
+func ExampleChainMap() {
+	m := map[int]string{
+		int('a'): "a",
+		int('b'): "b",
+		int('c'): "c",
+	}
+	for key, value := range iter.ChainMap(m) {
+		fmt.Println(key, value)
+	}
+
+	// Output:
+	// 97 a
+	// 98 b
+	// 99 c
+}
