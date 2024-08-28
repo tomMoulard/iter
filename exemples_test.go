@@ -174,9 +174,9 @@ func ExampleTakeWhile() {
 
 func ExampleChainMap() {
 	m := map[int]string{
-		int('a'): "a",
 		int('b'): "b",
 		int('c'): "c",
+		int('a'): "a",
 	}
 	for key, value := range iter.ChainMap(m) {
 		fmt.Println(key, value)
