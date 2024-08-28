@@ -42,7 +42,6 @@ spell: ## misspell
 .PHONY: lint
 lint: ## golangci-lint
 	yamllint .
-	# goreleaser check # TODO:fix this weird behavior
 	golangci-lint run
 
 .PHONY: check

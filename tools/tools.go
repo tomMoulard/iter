@@ -11,6 +11,5 @@ package tools
 import (
 	_ "github.com/golangci/golangci-lint/cmd/golangci-lint"
 	_ "github.com/golangci/misspell/cmd/misspell"
-	_ "github.com/goreleaser/goreleaser/v2"
 	_ "golang.org/x/vuln/cmd/govulncheck"
 )
