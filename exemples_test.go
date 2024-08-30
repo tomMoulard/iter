@@ -129,13 +129,17 @@ func ExampleFilterFalse() {
 }
 
 func ExampleGroupBy() {
+	out := make(map[int][]int)
 	for k, v := range iter.GroupBy(func(x int) int { return x % 2 }, []int{1, 2, 3, 4, 5}) {
-		fmt.Println(k, iter.Values(v))
+		out[k] = iter.Values(v)
 	}
 
+	fmt.Println(out[0])
+	fmt.Println(out[1])
+
 	// Output:
-	// 1 [1 3 5]
-	// 0 [2 4]
+	// [2 4]
+	// [1 3 5]
 }
 
 func ExampleMap() {
