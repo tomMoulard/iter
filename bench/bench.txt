@@ -1,0 +1,43 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/tommoulard/iter/bench
+cpu: Apple M2 Pro
+BenchmarkZipInt/raw-small-10         	143657376	         8.096 ns/op	       0 B/op	       0 allocs/op
+BenchmarkZipInt/iter-small-10        	100000000	        11.84 ns/op	       0 B/op	       0 allocs/op
+BenchmarkZipInt/lo-small-10          	17715063	        77.21 ns/op	     160 B/op	       1 allocs/op
+BenchmarkZipInt/raw-medium-10        	  203836	      5827 ns/op	       0 B/op	       0 allocs/op
+BenchmarkZipInt/iter-medium-10       	  134146	      8653 ns/op	       0 B/op	       0 allocs/op
+BenchmarkZipInt/lo-medium-10         	   27711	     37649 ns/op	  163840 B/op	       1 allocs/op
+BenchmarkZipInt/raw-large-10         	      20	  57669746 ns/op	       0 B/op	       0 allocs/op
+BenchmarkZipInt/iter-large-10        	      13	  87067080 ns/op	       0 B/op	       0 allocs/op
+BenchmarkZipInt/lo-large-10          	       3	 538410792 ns/op	1600004096 B/op	       1 allocs/op
+BenchmarkFilterInt/raw-small-10      	293605305	         4.054 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFilterInt/iter-small-10     	64710810	        18.26 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFilterInt/lo-small-10       	31336432	        34.72 ns/op	      80 B/op	       1 allocs/op
+BenchmarkFilterInt/raw-medium-10     	  406414	      2900 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFilterInt/iter-medium-10    	   28688	     41909 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFilterInt/lo-medium-10      	   26198	     40965 ns/op	   81920 B/op	       1 allocs/op
+BenchmarkFilterInt/raw-large-10      	      40	  28716039 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFilterInt/iter-large-10     	       2	 506927833 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFilterInt/lo-large-10       	       2	 534741980 ns/op	800006144 B/op	       1 allocs/op
+BenchmarkGroupByInt/raw-small-10     	292751682	         4.094 ns/op	       0 B/op	       0 allocs/op
+BenchmarkGroupByInt/iter-small-10    	 2548356	       443.1 ns/op	     608 B/op	      15 allocs/op
+BenchmarkGroupByInt/lo-small-10      	 3779152	       307.6 ns/op	     416 B/op	       8 allocs/op
+BenchmarkGroupByInt/raw-medium-10    	  403899	      2927 ns/op	       0 B/op	       0 allocs/op
+BenchmarkGroupByInt/iter-medium-10   	    6633	    181352 ns/op	  256960 B/op	      41 allocs/op
+BenchmarkGroupByInt/lo-medium-10     	    6902	    170002 ns/op	  256768 B/op	      34 allocs/op
+BenchmarkGroupByInt/raw-large-10     	      39	  29196759 ns/op	       0 B/op	       0 allocs/op
+BenchmarkGroupByInt/iter-large-10    	       1	1846593417 ns/op	4698254288 B/op	     122 allocs/op
+BenchmarkGroupByInt/lo-large-10      	       1	1686417042 ns/op	4698254176 B/op	     115 allocs/op
+BenchmarkMapInt/raw-small-10         	293158802	         4.044 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMapInt/iter-small-10        	54113163	        22.19 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMapInt/lo-small-10          	36674395	        32.99 ns/op	      80 B/op	       1 allocs/op
+BenchmarkMapInt/raw-medium-10        	  406935	      2892 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMapInt/iter-medium-10       	   60000	     19982 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMapInt/lo-medium-10         	   56390	     18453 ns/op	   81920 B/op	       1 allocs/op
+BenchmarkMapInt/raw-large-10         	      40	  28977786 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMapInt/iter-large-10        	       5	 202156883 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMapInt/lo-large-10          	       6	 178904694 ns/op	800006144 B/op	       1 allocs/op
+BenchmarkChainMapInt/raw-medium-10   	      81	  14677423 ns/op	       0 B/op	       0 allocs/op
+BenchmarkChainMapInt/iter-medium-10  	      26	  45128779 ns/op	  327760 B/op	       4 allocs/op
+BenchmarkChainMapInt/lo-medium-10    	      80	  14815017 ns/op	  327680 B/op	       1 allocs/op
