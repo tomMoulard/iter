@@ -270,3 +270,70 @@ func ChainMap[T cmp.Ordered, U any](a map[T]U) iter.Seq2[T, U] {
 		}
 	}
 }
+
+// Permutations returns a sequence of permutations of the input sequence.
+// The resulting sequence contains all possible permutations of the input
+// sequence.
+// This function is a helper for `PermutationsLen(a, len(a))`.
+func Permutations[T any](a []T) iter.Seq[[]T] {
+	return PermutationsLen(a, len(a))
+}
+
+// PermutationsLen returns a sequence of permutations of the input sequence.
+// The resulting sequence contains all possible permutations of the input
+// sequence with the specified length.
+// It uses the Heap's algorithm to generate the permutations.
+func PermutationsLen[T any](a []T, length int) iter.Seq[[]T] {
+	if length == 0 {
+		return func(yield func([]T) bool) {}
+	}
+
+	if length > len(a) {
+		return func(yield func([]T) bool) {
+			if !yield(a) {
+				return
+			}
+		}
+	}
+
+	if length == 1 {
+		return func(yield func([]T) bool) {
+			for i := range a {
+				if !yield([]T{a[i]}) {
+					return
+				}
+			}
+		}
+	}
+
+	c := make([]int, len(a))
+	i := 0
+
+	return func(yield func([]T) bool) {
+		if !yield(a[:length]) {
+			return
+		}
+
+		for i < len(a) {
+			if c[i] >= i {
+				c[i] = 0
+				i++
+
+				continue
+			}
+
+			if i%2 == 0 {
+				a[i], a[0] = a[0], a[i]
+			} else {
+				a[i], a[c[i]] = a[c[i]], a[i]
+			}
+
+			if !yield(a[:length]) {
+				return
+			}
+
+			c[i]++
+			i = 0
+		}
+	}
+}

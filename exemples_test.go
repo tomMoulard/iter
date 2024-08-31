@@ -191,3 +191,31 @@ func ExampleChainMap() {
 	// 98 b
 	// 99 c
 }
+
+func ExamplePermutations() {
+	for value := range iter.Permutations([]int{1, 2, 3}) {
+		fmt.Println(value)
+	}
+
+	// Output:
+	// [1 2 3]
+	// [2 1 3]
+	// [3 1 2]
+	// [1 3 2]
+	// [2 3 1]
+	// [3 2 1]
+}
+
+func ExamplePermutationsLen() {
+	for value := range iter.PermutationsLen([]int{1, 2, 3}, 2) {
+		fmt.Println(value)
+	}
+
+	// Output:
+	// [1 2]
+	// [2 1]
+	// [3 1]
+	// [1 3]
+	// [2 3]
+	// [3 2]
+}

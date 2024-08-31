@@ -892,3 +892,170 @@ func TestChainMap(t *testing.T) {
 		})
 	}
 }
+
+func TestPermutation(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name   string
+		a      []any
+		expect []any
+	}{
+		{
+			name:   "permutation of 0 elements",
+			a:      []any{},
+			expect: []any{},
+		},
+		{
+			name:   "permutation of 1 elements",
+			a:      []any{1},
+			expect: []any{[]any{1}},
+		},
+		{
+			name: "permutation of 2 elements",
+			a:    []any{1, 2},
+			expect: []any{
+				[]any{1, 2},
+				[]any{2, 1},
+			},
+		},
+		{
+			name: "permutation of 3 elements",
+			a:    []any{1, 2, 3},
+			expect: []any{
+				[]any{1, 2, 3},
+				[]any{2, 1, 3},
+				[]any{3, 1, 2},
+				[]any{1, 3, 2},
+				[]any{2, 3, 1},
+				[]any{3, 2, 1},
+			},
+		},
+		{
+			name: "permutation of 4 elements",
+			a:    []any{1, 2, 3, 4},
+			expect: []any{
+				[]any{1, 2, 3, 4},
+				[]any{2, 1, 3, 4},
+				[]any{3, 1, 2, 4},
+				[]any{1, 3, 2, 4},
+				[]any{2, 3, 1, 4},
+				[]any{3, 2, 1, 4},
+				[]any{4, 2, 1, 3},
+				[]any{2, 4, 1, 3},
+				[]any{1, 4, 2, 3},
+				[]any{4, 1, 2, 3},
+				[]any{2, 1, 4, 3},
+				[]any{1, 2, 4, 3},
+				[]any{1, 3, 4, 2},
+				[]any{3, 1, 4, 2},
+				[]any{4, 1, 3, 2},
+				[]any{1, 4, 3, 2},
+				[]any{3, 4, 1, 2},
+				[]any{4, 3, 1, 2},
+				[]any{4, 3, 2, 1},
+				[]any{3, 4, 2, 1},
+				[]any{2, 4, 3, 1},
+				[]any{4, 2, 3, 1},
+				[]any{3, 2, 4, 1},
+				[]any{2, 3, 4, 1},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+
+			i := 0
+
+			for got := range iter.Permutations(test.a) {
+				t.Logf("%d: got: %v", i, got)
+				assert.Equal(t, test.expect[i], got)
+
+				i++
+			}
+
+			assert.Equal(t, len(test.expect), i)
+		})
+	}
+}
+
+func TestPermutationLen(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name   string
+		a      []any
+		len    int
+		expect []any
+	}{
+		{
+			name:   "permutation of 3 elements, len = 0",
+			a:      []any{1, 2, 3},
+			len:    0,
+			expect: []any{},
+		},
+		{
+			name: "permutation of 3 elements, len = 1",
+			a:    []any{1, 2, 3},
+			len:  1,
+			expect: []any{
+				[]any{1},
+				[]any{2},
+				[]any{3},
+			},
+		},
+		{
+			name: "permutation of 3 elements, len = 2",
+			a:    []any{1, 2, 3},
+			len:  2,
+			expect: []any{
+				[]any{1, 2},
+				[]any{2, 1},
+				[]any{3, 1},
+				[]any{1, 3},
+				[]any{2, 3},
+				[]any{3, 2},
+			},
+		},
+		{
+			name: "permutation of 3 elements, len = 3",
+			a:    []any{1, 2, 3},
+			len:  3,
+			expect: []any{
+				[]any{1, 2, 3},
+				[]any{2, 1, 3},
+				[]any{3, 1, 2},
+				[]any{1, 3, 2},
+				[]any{2, 3, 1},
+				[]any{3, 2, 1},
+			},
+		},
+		{
+			name: "len(a) < len",
+			a:    []any{1, 2, 3},
+			len:  42,
+			expect: []any{
+				[]any{1, 2, 3},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+
+			i := 0
+
+			for got := range iter.PermutationsLen(test.a, test.len) {
+				t.Logf("got: %v", got)
+				assert.Equal(t, test.expect[i], got)
+
+				i++
+			}
+
+			assert.Equal(t, len(test.expect), i)
+		})
+	}
+}
