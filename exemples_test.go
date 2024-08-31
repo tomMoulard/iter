@@ -52,6 +52,7 @@ func ExampleIZip() {
 	// 2 5
 	// 3 6
 }
+
 func ExampleZipLongest() {
 	for a, b := range iter.ZipLongest([]int{1, 2, 3}, []int{4}, 0) {
 		fmt.Println(a, b)
@@ -236,4 +237,77 @@ func ExamplePermutationsLen() {
 	// [1 3]
 	// [2 3]
 	// [3 2]
+}
+
+func ExampleAppend() {
+	i1 := iter.Chain([]int{1, 2, 3})
+	i2 := iter.Chain([]int{4, 5, 6})
+
+	for value := range iter.Append(i1, i2) {
+		fmt.Println(value)
+	}
+
+	// Output:
+	// 1
+	// 2
+	// 3
+	// 4
+	// 5
+	// 6
+}
+
+func ExampleAppend2() {
+	i1 := iter.ChainMap(map[int]string{1: "1", 2: "2", 3: "3"})
+	i2 := iter.ChainMap(map[int]string{4: "4", 5: "5", 6: "6"})
+
+	for key, value := range iter.Append2(i1, i2) {
+		fmt.Printf("%d: %q\n", key, value)
+	}
+
+	// Output:
+	// 1: "1"
+	// 2: "2"
+	// 3: "3"
+	// 4: "4"
+	// 5: "5"
+	// 6: "6"
+}
+
+func ExampleFirst() {
+	i := iter.ChainMap(map[int]string{1: "2", 2: "4", 3: "6"})
+
+	for key := range iter.First(i) {
+		fmt.Println(key)
+	}
+
+	// Output:
+	// 1
+	// 2
+	// 3
+}
+
+func ExampleSecond() {
+	i := iter.ChainMap(map[int]string{1: "2", 2: "4", 3: "6"})
+
+	for Values := range iter.Second(i) {
+		fmt.Printf("%q\n", Values)
+	}
+
+	// Output:
+	// "2"
+	// "4"
+	// "6"
+}
+
+func ExampleEqual() {
+	fmt.Println(iter.Equal(iter.Chain([]int{1, 2, 3}), iter.Chain([]int{1, 2, 3}))) // true
+	fmt.Println(iter.Equal(iter.Chain([]int{1, 2, 3}), iter.Chain([]int{1, 2})))    // true
+	fmt.Println(iter.Equal(iter.Chain([]int{1, 2, 5}), iter.Chain([]int{1, 2, 3}))) // false
+	fmt.Println(iter.Equal(iter.Chain([]int{1, 2, 5}), iter.Chain([]int{1, 2})))    // true
+
+	// Output:
+	// true
+	// true
+	// false
+	// true
 }

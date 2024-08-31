@@ -1167,3 +1167,108 @@ func TestPermutationLen(t *testing.T) {
 		})
 	}
 }
+
+func TestAppend(t *testing.T) {
+	t.Parallel()
+
+	expected := []int{1, 2, 3, 4, 5, 6}
+	got := iter.Values(
+		iter.Append(
+			iter.Chain([]int{1, 2, 3}),
+			iter.Chain([]int{4, 5, 6}),
+		),
+	)
+
+	assert.Equal(t, expected, got)
+}
+
+func TestAppend2(t *testing.T) {
+	t.Parallel()
+
+	m1 := map[int]int{1: 2, 3: 4, 5: 6}
+	m2 := map[int]int{7: 8, 9: 10, 11: 12}
+	expectedKeys := []int{1, 3, 5, 7, 9, 11}
+	expectedValues := []int{2, 4, 6, 8, 10, 12}
+
+	keys, values := iter.Values2(
+		iter.Append2(
+			iter.ChainMap(m1),
+			iter.ChainMap(m2),
+		),
+	)
+
+	assert.Equal(t, expectedKeys, keys)
+	assert.Equal(t, expectedValues, values)
+}
+
+func TestFirst(t *testing.T) {
+	t.Parallel()
+
+	m1 := map[int]int{1: 2, 3: 4, 5: 6}
+	expected := []int{1, 3, 5}
+
+	got := iter.Values(iter.First(iter.ChainMap(m1)))
+
+	assert.Equal(t, expected, got)
+}
+
+func TestSecond(t *testing.T) {
+	t.Parallel()
+
+	m1 := map[int]int{1: 2, 3: 4, 5: 6}
+	expected := []int{2, 4, 6}
+
+	got := iter.Values(iter.Second(iter.ChainMap(m1)))
+
+	assert.Equal(t, expected, got)
+}
+
+func TestEqual(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name   string
+		a      stdIter.Seq[any]
+		b      stdIter.Seq[any]
+		expect bool
+	}{
+		{
+			name:   "equal two slices of int",
+			a:      iter.Chain([]any{1, 2, 3}),
+			b:      iter.Chain([]any{1, 2, 3}),
+			expect: true,
+		},
+		{
+			name:   "two slices of int, len(a) > len(b)",
+			a:      iter.Chain([]any{1, 2, 3}),
+			b:      iter.Chain([]any{1, 2}),
+			expect: true,
+		},
+		{
+			name:   "two slices of int, len(a) < len(b)",
+			a:      iter.Chain([]any{1, 2}),
+			b:      iter.Chain([]any{1, 2, 3}),
+			expect: true,
+		},
+		{
+			name:   "not equal two slices of int",
+			a:      iter.Chain([]any{1, 2, 5}),
+			b:      iter.Chain([]any{1, 2, 3}),
+			expect: false,
+		},
+		{
+			name:   "not equal two slices of int, len(a) > len(b)",
+			a:      iter.Chain([]any{1, 2, 5}),
+			b:      iter.Chain([]any{1, 2}),
+			expect: true,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+
+			assert.Equal(t, test.expect, iter.Equal(test.a, test.b))
+		})
+	}
+}

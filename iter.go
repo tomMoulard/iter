@@ -370,3 +370,57 @@ func PermutationsLen[T any](a []T, length int) iter.Seq[[]T] {
 		}
 	}
 }
+
+// Append returns a sequence of elements from the concatenation of the input
+// sequences.
+func Append[T any](seqs ...iter.Seq[T]) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for i := range seqs {
+			seqs[i](func(elem T) bool {
+				return yield(elem)
+			})
+		}
+	}
+}
+
+// Append2 returns a sequence of elements from the concatenation of the input
+// sequences.
+func Append2[T, U any](seqs ...iter.Seq2[T, U]) iter.Seq2[T, U] {
+	return func(yield func(T, U) bool) {
+		for i := range seqs {
+			seqs[i](func(elem1 T, elem2 U) bool {
+				return yield(elem1, elem2)
+			})
+		}
+	}
+}
+
+// First returns a sequence of elements from the input sequence.
+// The resulting sequence contains only the first element of the input sequence.
+func First[T, U any](seq iter.Seq2[T, U]) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		seq(func(elem T, _ U) bool {
+			return yield(elem)
+		})
+	}
+}
+
+// Second returns a sequence of elements from the input sequence.
+// The resulting sequence contains only the second element of the input sequence.
+func Second[T, U any](seq iter.Seq2[T, U]) iter.Seq[U] {
+	return func(yield func(U) bool) {
+		seq(func(_ T, elem U) bool {
+			return yield(elem)
+		})
+	}
+}
+
+func Equal[T comparable](seqA, seqB iter.Seq[T]) bool {
+	for aa, bb := range IZip(seqA, seqB) {
+		if aa != bb {
+			return false
+		}
+	}
+
+	return true
+}
