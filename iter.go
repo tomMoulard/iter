@@ -282,11 +282,13 @@ type pair[T, U any] struct {
 
 // ChainMap returns a sequence of elements from the input map.
 // The resulting sequence is ordered by the keys of the input map.
-func ChainMap[T cmp.Ordered, U any](a map[T]U) iter.Seq2[T, U] {
-	ordered := make([]pair[T, U], 0, len(a))
+func ChainMap[T cmp.Ordered, U any](maps ...map[T]U) iter.Seq2[T, U] {
+	ordered := make([]pair[T, U], 0, len(maps))
 
-	for k, v := range a {
-		ordered = append(ordered, pair[T, U]{key: k, val: v})
+	for i := range maps {
+		for k, v := range maps[i] {
+			ordered = append(ordered, pair[T, U]{key: k, val: v})
+		}
 	}
 
 	slices.SortFunc(ordered, func(a, b pair[T, U]) int {

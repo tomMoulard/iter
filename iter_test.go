@@ -949,19 +949,36 @@ func TestChainMap(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		a       map[int]any
+		a       []map[int]any
 		expectA []any
 		expectB []any
 	}{
 		{
 			name: "int map",
-			a: map[int]any{
+			a: []map[int]any{{
 				1: 2,
 				3: 4,
 				5: 6,
-			},
+			}},
 			expectA: []any{1, 3, 5},
 			expectB: []any{2, 4, 6},
+		},
+		{
+			name: "multiple int map",
+			a: []map[int]any{
+				{
+					1: 2,
+					3: 5,
+					5: 6,
+				},
+				{
+					1:  4,
+					6:  8,
+					10: 12,
+				},
+			},
+			expectA: []any{1, 1, 3, 5, 6, 10},
+			expectB: []any{2, 4, 5, 6, 8, 12},
 		},
 	}
 
@@ -970,7 +987,9 @@ func TestChainMap(t *testing.T) {
 			t.Parallel()
 
 			i := 0
-			for gotA, gotB := range iter.ChainMap(test.a) {
+
+			for gotA, gotB := range iter.ChainMap(test.a...) {
+				t.Logf("gotA: %v, gotB: %v", gotA, gotB)
 				assert.Equal(t, test.expectA[i], gotA)
 				assert.Equal(t, test.expectB[i], gotB)
 
