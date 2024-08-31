@@ -37,6 +37,19 @@ func Values2[T, U any](seq iter.Seq2[T, U]) ([]T, []U) {
 	return resT, resU
 }
 
+// Values2Map returns a map of elements from the input sequence.
+func Values2Map[T comparable, U any](seq iter.Seq2[T, U]) map[T]U {
+	res := make(map[T]U)
+
+	seq(func(elem1 T, elem2 U) bool {
+		res[elem1] = elem2
+
+		return true
+	})
+
+	return res
+}
+
 // Zip returns a sequence of pairs of elements from the input sequences.
 // The resulting sequence is as long as the shortest input sequence.
 func Zip[T, U any](a []T, b []U) iter.Seq2[T, U] {

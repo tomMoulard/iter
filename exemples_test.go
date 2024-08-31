@@ -23,6 +23,14 @@ func ExampleValues2() {
 	// [1 2 3] [4 5 6]
 }
 
+func ExampleValues2Map() {
+	intSeq2 := iter.Zip([]int{1, 2, 3}, []int{4, 5, 6})
+	fmt.Println(iter.Values2Map(intSeq2))
+
+	// Output:
+	// map[1:4 2:5 3:6]
+}
+
 func ExampleZip() {
 	for a, b := range iter.Zip([]int{1, 2, 3}, []int{4, 5, 6}) {
 		fmt.Println(a, b)

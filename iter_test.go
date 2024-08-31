@@ -85,6 +85,41 @@ func TestValues2(t *testing.T) {
 	}
 }
 
+func TestValues2Map(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name   string
+		a      stdIter.Seq2[any, any]
+		expect map[any]any
+	}{
+		{
+			name:   "values2 int",
+			a:      iter.Zip([]any{1, 2, 3}, []any{4, 5, 6}),
+			expect: map[any]any{1: 4, 2: 5, 3: 6},
+		},
+		{
+			name:   "values2 string",
+			a:      iter.Zip([]any{"a", "b", "c"}, []any{"d", "e", "f"}),
+			expect: map[any]any{"a": "d", "b": "e", "c": "f"},
+		},
+		{
+			name:   "values2 rune",
+			a:      iter.Zip([]any{'a', 'b', 'c'}, []any{'d', 'e', 'f'}),
+			expect: map[any]any{'a': 'd', 'b': 'e', 'c': 'f'},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+
+			gotA := iter.Values2Map(test.a)
+			assert.Equal(t, test.expect, gotA)
+		})
+	}
+}
+
 func TestZip(t *testing.T) {
 	t.Parallel()
 
