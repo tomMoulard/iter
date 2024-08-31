@@ -42,6 +42,16 @@ func ExampleZip() {
 	// 3 6
 }
 
+func ExampleIZip() {
+	for a, b := range iter.IZip(iter.Chain([]int{1, 2, 3}), iter.Chain([]int{4, 5, 6})) {
+		fmt.Println(a, b)
+	}
+
+	// Output:
+	// 1 4
+	// 2 5
+	// 3 6
+}
 func ExampleZipLongest() {
 	for a, b := range iter.ZipLongest([]int{1, 2, 3}, []int{4}, 0) {
 		fmt.Println(a, b)

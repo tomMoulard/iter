@@ -178,6 +178,60 @@ func TestZip(t *testing.T) {
 	}
 }
 
+func TestIZip(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name   string
+		a      stdIter.Seq[any]
+		b      stdIter.Seq[any]
+		expect [][]any
+	}{
+		{
+			name:   "izip two slices of int",
+			a:      iter.Chain([]any{4, 5, 6}),
+			b:      iter.Chain([]any{7, 8, 9}),
+			expect: [][]any{{4, 7}, {5, 8}, {6, 9}},
+		},
+		{
+			name:   "izip one slices of string, and one slice of int",
+			a:      iter.Chain([]any{"a", "b", "c"}),
+			b:      iter.Chain([]any{1, 2, 3}),
+			expect: [][]any{{"a", 1}, {"b", 2}, {"c", 3}},
+		},
+		{
+			name:   "izip two slices of int with different length len(a) < len(b)",
+			a:      iter.Chain([]any{4, 5, 6}),
+			b:      iter.Chain([]any{7, 8}),
+			expect: [][]any{{4, 7}, {5, 8}},
+		},
+		{
+			name:   "izip two slices of int with different length len(a) > len(b)",
+			a:      iter.Chain([]any{7, 8}),
+			b:      iter.Chain([]any{4, 5, 6}),
+			expect: [][]any{{7, 4}, {8, 5}},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+
+			i := 0
+
+			for a, b := range iter.IZip(test.a, test.b) {
+				t.Logf("a: %v, b: %v", a, b)
+				assert.Equal(t, test.expect[i][0], a)
+				assert.Equal(t, test.expect[i][1], b)
+
+				i++
+			}
+
+			assert.Equal(t, len(test.expect), i)
+		})
+	}
+}
+
 func TestZipLongest(t *testing.T) {
 	t.Parallel()
 

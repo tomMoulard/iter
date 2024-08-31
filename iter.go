@@ -61,6 +61,24 @@ func Zip[T, U any](a []T, b []U) iter.Seq2[T, U] {
 	}
 }
 
+// IZip returns a sequence of pairs of elements from the input sequences.
+// The resulting sequence is as long as the shortest input sequence.
+func IZip[T, U any](seqA iter.Seq[T], seqB iter.Seq[U]) iter.Seq2[T, U] {
+	return func(yield func(T, U) bool) {
+		next, stop := iter.Pull(seqB)
+		defer stop()
+
+		b, ok2 := next()
+		for a := range seqA {
+			if !ok2 || !yield(a, b) {
+				return
+			}
+
+			b, ok2 = next()
+		}
+	}
+}
+
 type either[T, U any] interface{}
 
 // ZipLongest returns a sequence of pairs of elements from the input
