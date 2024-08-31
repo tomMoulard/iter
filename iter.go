@@ -48,14 +48,14 @@ func Zip[T, U any](a []T, b []U) iter.Seq2[T, U] {
 	}
 }
 
-type Either[T, U any] interface{}
+type either[T, U any] interface{}
 
 // ZipLongest returns a sequence of pairs of elements from the input
 // sequences.
 // The resulting sequence is as long as the longest input sequence.
 // If one sequence is shorter than the other, the missing values are filled
 // with the provided fill value.
-func ZipLongest[T, U any](a []T, b []U, fill Either[T, U]) iter.Seq2[T, U] {
+func ZipLongest[T, U any](a []T, b []U, fill either[T, U]) iter.Seq2[T, U] {
 	maxLen := max(len(a), len(b))
 
 	return func(yield func(T, U) bool) {
