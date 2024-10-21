@@ -424,3 +424,15 @@ func Equal[T comparable](seqA, seqB iter.Seq[T]) bool {
 
 	return true
 }
+
+func Len[T any](seq iter.Seq[T]) int {
+	var l int
+
+	seq(func(elem T) bool {
+		l++
+
+		return true
+	})
+
+	return l
+}

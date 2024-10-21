@@ -1272,3 +1272,43 @@ func TestEqual(t *testing.T) {
 		})
 	}
 }
+
+func TestLen(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name   string
+		a      stdIter.Seq[any]
+		expect int
+	}{
+		{
+			name:   "values int",
+			a:      slices.Values([]any{1, 2, 3}),
+			expect: 3,
+		},
+		{
+			name:   "values string",
+			a:      slices.Values([]any{"a", "b", "c"}),
+			expect: 3,
+		},
+		{
+			name:   "values rune",
+			a:      slices.Values([]any{'a', 'b', 'c', 'd'}),
+			expect: 4,
+		},
+		{
+			name:   "empty iter",
+			a:      slices.Values([]any{}),
+			expect: 0,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+
+			got := iter.Len(test.a)
+			assert.Equal(t, test.expect, got)
+		})
+	}
+}
