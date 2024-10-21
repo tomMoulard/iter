@@ -215,7 +215,7 @@ func Filter[T any](pred func(T) bool, a []T) iter.Seq[T] {
 // The resulting sequence contains only the elements where the predicate is false.
 func FilterFalse[T any](pred func(T) bool, a []T) iter.Seq[T] {
 	return func(yield func(T) bool) {
-		for i := range len(a) {
+		for i := range a {
 			if !pred(a[i]) && !yield(a[i]) {
 				return
 			}
