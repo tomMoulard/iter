@@ -311,3 +311,11 @@ func ExampleEqual() {
 	// false
 	// true
 }
+
+func ExampleLen() {
+	intSeq := slices.Values([]int{1, 2, 3})
+	fmt.Println(iter.Len(intSeq))
+
+	// Output:
+	// 3
+}
