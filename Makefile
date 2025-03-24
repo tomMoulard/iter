@@ -3,7 +3,7 @@ SHELL := /bin/bash
 .DEFAULT_GOAL := all
 .PHONY: all
 all: ## build pipeline
-all: mod inst spell lint test
+all: inst spell lint test
 
 .PHONY: ci
 ci: ## CI build pipeline
@@ -20,33 +20,27 @@ clean: ## remove files created during build pipeline
 	rm -f '"$(shell go env GOCACHE)/../golangci-lint"'
 	go clean -i -cache -testcache -modcache -fuzzcache -x
 
-.PHONY: mod
-mod: ## go mod tidy
-	go mod tidy
-	cd tools && go mod tidy
-
 .PHONY: inst
 inst: ## go install tools
-	cd tools && go install $(shell cd tools && go list -e -f '{{ join .Imports " " }}' -tags=tools)
 	pip install --user yamllint
 
 .PHONY: build
 build: ## goreleaser build
 build:
-	goreleaser build --clean --single-target --snapshot
+	go tool goreleaser build --clean --single-target --snapshot
 
 .PHONY: spell
 spell: ## misspell
-	misspell -error -locale=US -w **.md
+	go tool misspell -error -locale=US -w **.md
 
 .PHONY: lint
 lint: ## golangci-lint
 	yamllint .
-	golangci-lint run
+	go tool golangci-lint run
 
 .PHONY: check
 check: ## govulncheck
-	govulncheck -show verbose ./...
+	go tool govulncheck -show verbose ./...
 
 .PHONY: test
 test: ## go test

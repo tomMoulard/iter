@@ -4,14 +4,8 @@ run:
 linters:
   enable-all: true
   disable:
-    - execinquery  # deprecated
-    - gomnd  # deprecated
-    - exportloopref  # deprecated
+    - tenv  # deprecated
     - varnamelen  # too strict
-    # - mnd  # too strict
-    # - ireturn  # not revelant
-    # - exhaustive  # not revelant
-    # - exhaustruct  # not revelant
 
 linters-settings:
   govet:
