@@ -887,6 +887,104 @@ func TestMap2(t *testing.T) {
 	}
 }
 
+func TestIMap(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name   string
+		fn     func(any) any
+		a      []any
+		expect []any
+		length int
+	}{
+		{
+			name: "map int",
+			fn: func(i any) any {
+				return i.(int) * 2
+			},
+			a:      []any{1, 2, 3, 4, 5},
+			expect: []any{2, 4, 6, 8, 10},
+			length: 5,
+		},
+		{
+			name: "map string",
+			fn: func(s any) any {
+				return s.(string) + "!"
+			},
+			a:      []any{"a", "b", "c", "d", "e"},
+			expect: []any{"a!", "b!", "c!", "d!", "e!"},
+			length: 5,
+		},
+		{
+			name: "map rune",
+			fn: func(r any) any {
+				return r.(rune) + 1
+			},
+			a:      []any{'a', 'b', 'c', 'd', 'e'},
+			expect: []any{'b', 'c', 'd', 'e', 'f'},
+			length: 5,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+
+			i := 0
+
+			for s := range iter.IMap(test.fn, slices.Values(test.a)) {
+				t.Logf("s: %v", s)
+				assert.Equal(t, test.expect[i], s)
+
+				i++
+			}
+
+			assert.Equal(t, test.length, i)
+		})
+	}
+}
+
+func TestIMap2(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name   string
+		fn     func(any, any) any
+		a      []any
+		b      []any
+		expect []any
+		length int
+	}{
+		{
+			name: "map2 int",
+			fn: func(a, b any) any {
+				return a.(int) + b.(int)
+			},
+			a:      []any{1, 2, 3, 4, 5},
+			b:      []any{2, 3, 4, 5, 6},
+			expect: []any{3, 5, 7, 9, 11},
+			length: 5,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+
+			i := 0
+
+			for s := range iter.IMap2(test.fn, slices.Values(test.a), slices.Values(test.b)) {
+				t.Logf("s: %v", s)
+				assert.Equal(t, test.expect[i], s)
+
+				i++
+			}
+
+			assert.Equal(t, test.length, i)
+		})
+	}
+}
+
 func TestTakeWhile(t *testing.T) {
 	t.Parallel()
 

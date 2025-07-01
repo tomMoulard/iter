@@ -185,6 +185,34 @@ func ExampleMap2() {
 	// 9
 }
 
+func ExampleIMap() {
+	for a := range iter.IMap(func(x int) int { return x * 2 }, slices.Values([]int{1, 2, 3, 4, 5})) {
+		fmt.Println(a)
+	}
+
+	// Output:
+	// 2
+	// 4
+	// 6
+	// 8
+	// 10
+}
+
+func ExampleIMap2() {
+	for a := range iter.IMap2(
+		func(x, y int) int { return x + y },
+		slices.Values([]int{1, 2, 3}),
+		slices.Values([]int{4, 5, 6}),
+	) {
+		fmt.Println(a)
+	}
+
+	// Output:
+	// 5
+	// 7
+	// 9
+}
+
 func ExampleTakeWhile() {
 	for a := range iter.TakeWhile(func(x int) bool { return x < 5 }, []int{1, 4, 6, 3, 8}) {
 		fmt.Println(a)

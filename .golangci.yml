@@ -6,6 +6,7 @@ linters:
   disable:
     - tenv  # deprecated
     - varnamelen  # too strict
+    - dupl  # useless
 
 linters-settings:
   govet:

@@ -79,7 +79,7 @@ func IZip[T, U any](seqA iter.Seq[T], seqB iter.Seq[U]) iter.Seq2[T, U] {
 	}
 }
 
-type either[T, U any] interface{}
+type either[T, U any] any
 
 // ZipLongest returns a sequence of pairs of elements from the input
 // sequences.
@@ -261,6 +261,30 @@ func Map2[T, U, V any](f func(T, U) V, a []T, b []U) iter.Seq[V] {
 
 	return func(yield func(V) bool) {
 		for i := 0; i < minLen && yield(f(a[i], b[i])); i++ {
+		}
+	}
+}
+
+// IMap returns a sequence of elements from the input sequence.
+// The resulting sequence contains the elements after applying the function to
+// each element of the input sequence.
+func IMap[T, U any](f func(T) U, a iter.Seq[T]) iter.Seq[U] {
+	return func(yield func(U) bool) {
+		a(func(elem T) bool {
+			return yield(f(elem))
+		})
+	}
+}
+
+// IMap2 returns a sequence of elements from the input sequences.
+// The resulting sequence contains the elements after applying the function to
+// each pair of elements from the input sequences.
+func IMap2[T, U, V any](f func(T, U) V, seqA iter.Seq[T], seqB iter.Seq[U]) iter.Seq[V] {
+	return func(yield func(V) bool) {
+		for a, b := range IZip(seqA, seqB) {
+			if !yield(f(a, b)) {
+				return
+			}
 		}
 	}
 }
